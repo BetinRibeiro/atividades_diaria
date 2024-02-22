@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- <link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.css"> -->
+<link rel="stylesheet" href="https://bootswatch.com/5/morph/bootstrap.css">
+<title>3 ensinamentos aleatórios</title>
+</head>
+<body>
+
+<div class="py-5" >
+    <div class="container">
+        <h1 class="text-center">Atividades diaria!</h1>
+        <div class="row">
+            <div id="ensinamentos" class="col-md-12"></div>
+        </div>
+
+        <div class="row">
+
+
+            <div class="d-grid gap-2">
+                <button class="btn btn-lg btn-primary" onclick="compartilhar()" type="button">Compartilhar</button>
+                <button class="btn btn-lg btn-primary" onclick="window.location.reload();" type="button">Atualizar</button>
+            </div>
+            
+  
+        </div>
+    </div>
+<script>
+async function fetchJson(url) {
+  const response = await fetch(url);
+  const json = await response.json();
+  return json;
+}
+
+async function showRandomEnsinamentos() {
+  const url = 'passos.json'; // Use a rota correta para o arquivo JSON
+  const ensinamentos = await fetchJson(url);
+  
+  const randomEnsinamentos = getRandomEnsinamentos(ensinamentos, 5);
+  
+  const ensinamentosDiv = document.getElementById('ensinamentos');
+  randomEnsinamentos.forEach(ensinamento => {
+    const ensinamentoDiv = document.createElement('div');
+    ensinamentoDiv.innerHTML = `<div class="alert alert-dismissible alert-secondary">
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    <h4 class="alert-heading">
+                                        ${ensinamento.nome}
+                                    </h4>
+                                    <p class="mb-0">
+                                        ${ensinamento.descricao}
+                                    </p>
+                                </div>`;
+    ensinamentosDiv.appendChild(ensinamentoDiv);
+  });
+}
+
+function getRandomEnsinamentos(ensinamentos, count) {
+  const shuffledEnsinamentos = ensinamentos.passos.sort(() => Math.random() - 0.5);
+  return shuffledEnsinamentos.slice(0, count);
+}
+
+showRandomEnsinamentos();
+function compartilhar() {
+  const titulo = 'Título da Página';
+  const url = window.location.href;
+  const mensagem = 'Confira este link:';
+  
+  if (navigator.share) {
+    navigator.share({
+      title: titulo,
+      text: mensagem,
+      url: url
+    })
+    .then(() => console.log('Compartilhado com sucesso!'))
+    .catch((error) => console.error('Erro ao compartilhar:', error));
+  } else {
+    alert('Navegador não suporta compartilhamento.');
+  }
+}
+</script>
+</body>
+</html>
